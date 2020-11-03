@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static com.jiangwensi.msscbrewery.utils.Convertors.asJsonString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -72,7 +73,7 @@ class BeerControllerTest {
                 post("/api/v1/beer")
                         .content(asJsonString(beerDto))
                         .contentType(MediaType.APPLICATION_JSON)
-        )
+                )
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/beer/" + beerDto.getId().toString()))
                 .andReturn();
@@ -81,22 +82,21 @@ class BeerControllerTest {
 
     @Test
     void handleUpdate() throws Exception {
-        String str = asJsonString(beerDto);
         mockMvc.perform(
                 put("/api/v1/beer/" + beerDto.getId())
                         .content(asJsonString(beerDto))
                         .contentType(MediaType.APPLICATION_JSON)
-        )
+                )
                 .andExpect(status().isNoContent())
                 .andReturn();
         verify(beerService, times(1)).updateBeer(beerDto.getId(), beerDto);
     }
 
-    private static String asJsonString(Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException();
-        }
+    @Test
+    void deleteBeer() throws Exception {
+        mockMvc.perform(delete("/api/v1/beer/"+beerDto.getId()))
+                .andExpect(status().isNoContent())
+                .andReturn();
+        verify(beerService,times(1)).deleteById(beerDto.getId());
     }
 }
