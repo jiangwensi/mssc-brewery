@@ -10,19 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -74,9 +70,9 @@ class BeerControllerTest {
         given(beerService.saveNewBeer(beerDto)).willReturn(beerDto);
         mockMvc.perform(
                 post("/api/v1/beer")
-                    .content(asJsonString(beerDto))
-                    .contentType(MediaType.APPLICATION_JSON)
-                )
+                        .content(asJsonString(beerDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/v1/beer/" + beerDto.getId().toString()))
                 .andReturn();
@@ -88,9 +84,9 @@ class BeerControllerTest {
         String str = asJsonString(beerDto);
         mockMvc.perform(
                 put("/api/v1/beer/" + beerDto.getId())
-                    .content(asJsonString(beerDto))
-                    .contentType(MediaType.APPLICATION_JSON)
-                )
+                        .content(asJsonString(beerDto))
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
                 .andExpect(status().isNoContent())
                 .andReturn();
         verify(beerService, times(1)).updateBeer(beerDto.getId(), beerDto);
