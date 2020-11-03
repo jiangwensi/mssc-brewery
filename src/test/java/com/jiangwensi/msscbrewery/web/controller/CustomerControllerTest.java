@@ -1,5 +1,7 @@
 package com.jiangwensi.msscbrewery.web.controller;
 
+import com.jayway.jsonpath.internal.Utils;
+import com.jiangwensi.msscbrewery.utils.Convertors;
 import com.jiangwensi.msscbrewery.web.model.CustomerDto;
 import com.jiangwensi.msscbrewery.web.services.CustomerService;
 import org.junit.jupiter.api.AfterEach;
@@ -8,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
@@ -55,5 +59,33 @@ class CustomerControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         verify(customerService,times(1)).getCustomerById(customerDto.getId().toString());
+    }
+
+    @Test
+    void createCustomer() throws Exception {
+        given(customerService.saveNewCustomer(customerDto)).willReturn(customerDto);
+        mockMvc.perform(post("/api/v1/customer")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(Convertors.asJsonString(customerDto))
+                    )
+                .andExpect(header().string("Location","/api/v1/customer/"+customerDto.getId()))
+                .andExpect(status().isCreated())
+                .andReturn();
+        verify(customerService,times(1)).saveNewCustomer(customerDto);
+    }
+
+    @Test
+    void updateCustomer() throws Exception {
+        mockMvc.perform(
+                put("/api/v1/customer/"+customerDto.getId().toString())
+                    .content(Convertors.asJsonString(customerDto))
+                    .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isNoContent()).andReturn();
+        verify(customerService,times(1)).updateCustomer(customerDto.getId().toString(),customerDto);
+    }
+
+    @Test
+    void deleteCustomer() {
     }
 }

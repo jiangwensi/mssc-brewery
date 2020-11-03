@@ -2,12 +2,10 @@ package com.jiangwensi.msscbrewery.web.controller;
 
 import com.jiangwensi.msscbrewery.web.model.CustomerDto;
 import com.jiangwensi.msscbrewery.web.services.CustomerService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Jiang Wensi on 3/11/2020
@@ -26,4 +24,26 @@ public class CustomerController {
     public ResponseEntity<CustomerDto> getCustomer(@PathVariable("customerId") String customerId){
         return new ResponseEntity<>(customerService.getCustomerById(customerId), HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity createCustomer(@RequestBody CustomerDto customerDto){
+        CustomerDto savedCustomer = customerService.saveNewCustomer(customerDto);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location","/api/v1/customer/"+savedCustomer.getId());
+        return new ResponseEntity(headers,HttpStatus.CREATED);
+    }
+
+    @PutMapping({"/{customerId}"})
+    public ResponseEntity updateCustomer(@PathVariable String customerId, @RequestBody CustomerDto customerDto){
+        customerService.updateCustomer(customerId,customerDto);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+
+    @DeleteMapping({"/{customerId}"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCustomer(@PathVariable String customerId){
+        customerService.deleteCustomer(customerId);
+    }
+
 }
