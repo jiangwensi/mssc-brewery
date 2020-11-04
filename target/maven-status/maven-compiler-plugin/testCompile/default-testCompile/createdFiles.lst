@@ -1,0 +1,4 @@
+com\jiangwensi\msscbrewery\MsscBreweryApplicationTests.class
+com\jiangwensi\msscbrewery\web\controller\BeerControllerTest.class
+com\jiangwensi\msscbrewery\web\controller\CustomerControllerTest.class
+com\jiangwensi\msscbrewery\utils\Convertors.class
