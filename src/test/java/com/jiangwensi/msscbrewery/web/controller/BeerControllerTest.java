@@ -68,28 +68,32 @@ class BeerControllerTest {
 
     @Test
     void handlePost() throws Exception {
-        given(beerService.saveNewBeer(beerDto)).willReturn(beerDto);
+        beerDto.setId(null);
+        BeerDto savedBto = BeerDto.builder().id(UUID.randomUUID()).build();
+        given(beerService.saveNewBeer(beerDto)).willReturn(savedBto);
         mockMvc.perform(
                 post("/api/v1/beer")
                         .content(asJsonString(beerDto))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/v1/beer/" + beerDto.getId().toString()))
+                .andExpect(header().string("Location", "/api/v1/beer/" + savedBto.getId().toString()))
                 .andReturn();
         verify(beerService, times(1)).saveNewBeer(beerDto);
     }
 
     @Test
     void handleUpdate() throws Exception {
+        beerDto.setId(null);
+
         mockMvc.perform(
-                put("/api/v1/beer/" + beerDto.getId())
+                put("/api/v1/beer/" + UUID.randomUUID())
                         .content(asJsonString(beerDto))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isNoContent())
                 .andReturn();
-        verify(beerService, times(1)).updateBeer(beerDto.getId(), beerDto);
+        verify(beerService, times(1)).updateBeer(any(UUID.class), any(BeerDto.class));
     }
 
     @Test
